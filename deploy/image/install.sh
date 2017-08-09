@@ -122,8 +122,18 @@ mv aws-cred /home/baresoil/.aws/credentials
 chown -R baresoil:baresoil /home/baresoil/.aws
 chmod 400 /home/baresoil/.aws/credentials
 
-# Download Docker sandbox image.
+#
+# Download or build Docker sandbox image.
+#
+# NOTE: The default setup downloads the open-source sandbox iceroad/baresoil-sandbox.
+# You can also modify the Dockerfile in this directory and uncomment the following
+# line to build the image locally instead:
+
+# To download image from Docker Hub, use following line (or another image):
 docker pull iceroad/baresoil-sandbox:latest
 
-rm install.sh
+# To build image locally, uncomment following line and edit 'Dockerfile':
+# docker build -t iceroad/baresoil-sandbox .
+
+rm -f install.sh Dockerfile
 echo "Build completed"

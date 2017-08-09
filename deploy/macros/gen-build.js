@@ -27,7 +27,8 @@ function GenerateServerConfig(base, tfState, clusterConfig) {
 function genBuild(base, args) {
   const tfState = deployUtil.getTerraformOutputs();
   const clusterConfig = deployUtil.getClusterConfig(base.getDiskConfig());
-  const buildName = args.name || `${clusterConfig.vpc.clusterId}-${Date.now()}`;
+  const dt = new Date().toISOString().replace(/[:T]/g, '-').substr(0, 19);
+  const buildName = args.name || `${clusterConfig.vpc.clusterId}-${dt}`;
   const buildComment = (args.comment ||
       `${os.userInfo().username}@${os.hostname()} on ${new Date().toString()}`);
 
@@ -46,23 +47,28 @@ function genBuild(base, args) {
   fs.writeFileSync(configPath, json(serverConfig, null, 2), 'utf-8');
   console.log(`Wrote server configuration to "${chalk.green(configPath)}".`);
 
+  // Copy the Dockerfile to the image directory.
+  const dockerfileIn = path.resolve('image-setup/Dockerfile');
+  const dockerfileOut = path.join(buildDir, 'dist/Dockerfile');
+  console.log(chalk.green(`> Writing ${chalk.bold(dockerfileOut)}...`));
+  fse.copySync(dockerfileIn, dockerfileOut);
+
   // Generate the server install script and write it to the build directory.
-  const installSrcPath = path.resolve('image-setup/install.sh');
-  const installScript = fs.readFileSync(installSrcPath, 'utf-8');
+  const installScriptPath = path.resolve('image-setup/install.sh');
   const scriptOutPath = path.join(buildDir, 'dist/install.sh');
   console.log(chalk.green(`> Writing ${chalk.bold(scriptOutPath)}...`));
-  fs.writeFileSync(scriptOutPath, installScript, 'utf-8');
+  fse.copySync(installScriptPath, scriptOutPath);
 
   // Generate nginx config.
   const nginxConf = genNginxConfig(clusterConfig, base.getConfig());
   let confOutPath = path.join(buildDir, 'dist/nginx.site.conf');
-  console.log(chalk.green(`> Writing ${chalk.bold('nginx.site.conf')}...`));
+  console.log(chalk.green(`> Writing ${chalk.bold(confOutPath)}...`));
   fs.writeFileSync(confOutPath, nginxConf, 'utf-8');
 
   // Copy supervisord config.
   const supervisorConf = fs.readFileSync('image-setup/supervisord.conf', 'utf-8');
   confOutPath = path.join(buildDir, 'dist/supervisord.conf');
-  console.log(chalk.green(`> Writing ${chalk.bold('supervisord.conf')}...`));
+  console.log(chalk.green(`> Writing ${chalk.bold(confOutPath)}...`));
   fs.writeFileSync(confOutPath, supervisorConf, 'utf-8');
 
   // Write Packer config.
