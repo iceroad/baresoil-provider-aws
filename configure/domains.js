@@ -29,7 +29,7 @@ policies attached to the current: ${chalk.bold('Route53FullAccess')},
             type: 'confirm',
             name: 'useTld',
             message: 'Set up one or more Route53-managed domain names?',
-            default: config.useTld || true,
+            default: config.useTld,
           },
         ];
         inquirer.prompt(questions).then(answers => cb(null, answers.useTld));

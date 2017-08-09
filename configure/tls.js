@@ -36,7 +36,7 @@ SANs preferred on certificate: ${sansPreferredStr}`);
         type: 'confirm',
         name: 'useTls',
         message: 'Use an Amazon Certificate Manager certificate for HTTPS support?',
-        default: config.useTls || true,
+        default: config.useTls,
       },
     ];
 

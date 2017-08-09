@@ -7,7 +7,9 @@ const _ = require('lodash'),
 
 
 function Configure(base, args) {
-  const diskConfig = base.getDiskConfig().config;
+  const diskConfig = base.getDiskConfig().config || {
+    provider: 'aws',
+  };
 
   console.log(`
   ${chalk.yellow.bold('Baresoil Provider for Amazon AWS')}
@@ -43,11 +45,12 @@ function Configure(base, args) {
       return process.exit(1);
     }
     const result = _.merge({}, diskConfig, {
+      provider: 'aws',
       master: {
         aws: _.merge({}, ...results),
       },
     });
-    const diskConfigPath = base.getDiskConfig().configPath;
+    const diskConfigPath = base.getDiskConfig().configPath || 'baresoil-server.conf.json';
     fs.writeFileSync(diskConfigPath, json(result, null, 2), 'utf-8');
     console.log(`Updated "master" section of ${chalk.bold.green(diskConfigPath)}`);
 
