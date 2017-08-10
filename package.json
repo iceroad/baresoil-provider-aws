@@ -1,6 +1,6 @@
 {
   "name": "baresoil-provider-aws",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "AWS provider for Baresoil Server.",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,7 @@
   "dependencies": {
     "async": "^2.5.0",
     "aws-sdk": "^2.95.0",
-    "baresoil-plugin-docker-sandbox": "^1.0.0",
+    "baresoil-plugin-docker-sandbox": "^1.0.1",
     "baresoil-plugin-postgres-metastore": "^1.0.1",
     "baresoil-plugin-s3-blobstore": "^1.0.1",
     "chalk": "^2.1.0",
